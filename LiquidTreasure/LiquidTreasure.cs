@@ -1,5 +1,5 @@
 /*
-* LiquidTreasure v3.0.0.4 by LiquidAtoR
+* LiquidTreasure v3.0.0.5 by LiquidAtoR
 *
 * This is a little addon that will approach world treasure chests.
 * It will open them and loot the content (and confirm any BoP messages in the process).
@@ -11,6 +11,9 @@
 * This plugin was created on request of Fluffyhusky on the HB forums.
 * Special thanks to Chinajade and Thephoenix25 for their help with the CanFly part.
 * Special Thanks to Hazard for the idea and tiagofmcosta to improve on that idea.
+*
+* 2013/06/18 v3.0.0.5
+* Small changes to make it run smoother.
 *
 * 2013/03/13 v3.0.0.4
 * Added Trove of the Thunder King.
@@ -100,7 +103,7 @@ namespace PluginLiquidTreasure3 {
     internal class LiquidTreasure3 : HBPlugin {
         public override string Name { get { return "LiquidTreasure 3.0"; } }
         public override string Author { get { return "LiquidAtoR"; } }
-        public override Version Version { get { return new Version(3, 0, 0, 4); } }
+        public override Version Version { get { return new Version(3, 0, 0, 5); } }
         private bool _init;
         private const int MinimumReputationForExalted = 21000;
         private const int MinimumReputationForBestFriends = 42000;
@@ -156,7 +159,7 @@ namespace PluginLiquidTreasure3 {
                 }
                 ObjectManager.Update();
                 var objList = ObjectManager.GetObjectsOfType<WoWGameObject>().Where(onyxegg => (onyxegg.Distance2D 
-                    <= Styx.CommonBot.LootTargeting.LootRadius && (onyxegg.Entry == 214945)))
+                    <= Styx.CommonBot.LootTargeting.LootRadius && (onyxegg.Entry == 214945) && onyxegg.CanUse()))
                     .OrderBy(onyxegg => onyxegg.Distance).ToList();
                 foreach (var onyxegg in objList) {
                     if (!onyxegg.InLineOfSight) {
@@ -189,7 +192,7 @@ namespace PluginLiquidTreasure3 {
                 }
                 ObjectManager.Update();
                 var objList = ObjectManager.GetObjectsOfType<WoWGameObject>().Where(netherwingegg => (netherwingegg.Distance2D 
-                    <= Styx.CommonBot.LootTargeting.LootRadius && (netherwingegg.Entry == 185915)))
+                    <= Styx.CommonBot.LootTargeting.LootRadius && (netherwingegg.Entry == 185915) && netherwingegg.CanUse()))
                     .OrderBy(netherwingegg => netherwingegg.Distance).ToList();
                 foreach (var netherwingegg in objList) {
                     if (!netherwingegg.InLineOfSight) {
@@ -217,23 +220,22 @@ namespace PluginLiquidTreasure3 {
 
         #region DarkSoil
             public static void DarkSoil() {
-                if (//(StyxWoW.Me.GetReputationWith(1272) > MinimumReputationForExalted) &&
-                (StyxWoW.Me.GetReputationWith(1273) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1275) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1276) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1277) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1278) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1279) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1280) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1281) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1282) > MinimumReputationForBestFriends) &&
-                (StyxWoW.Me.GetReputationWith(1283) > MinimumReputationForBestFriends) ||
-                (StyxWoW.Me.LevelFraction < 90)) {
+                if ((StyxWoW.Me.GetReputationWith(1273) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1275) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1276) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1277) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1278) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1279) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1280) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1281) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1282) > MinimumReputationForBestFriends) &&
+					(StyxWoW.Me.GetReputationWith(1283) > MinimumReputationForBestFriends) ||
+					(StyxWoW.Me.LevelFraction < 90)) {
                     return;
                 }
                 ObjectManager.Update();
                 var objList = ObjectManager.GetObjectsOfType<WoWGameObject>().Where(darksoil => (darksoil.Distance2D 
-                    <= Styx.CommonBot.LootTargeting.LootRadius && (darksoil.Entry == 210565)))
+                    <= Styx.CommonBot.LootTargeting.LootRadius && (darksoil.Entry == 210565) && darksoil.CanUse()))
                     .OrderBy(darksoil => darksoil.Distance).ToList();
                 foreach (var darksoil in objList) {
                     if (!darksoil.InLineOfSight) {
