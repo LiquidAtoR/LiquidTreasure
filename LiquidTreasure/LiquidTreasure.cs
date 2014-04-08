@@ -1,5 +1,5 @@
 /*
-* LiquidTreasure v3.0.0.5 by LiquidAtoR
+* LiquidTreasure v3.0.0.6 by LiquidAtoR
 *
 * This is a little addon that will approach world treasure chests.
 * It will open them and loot the content (and confirm any BoP messages in the process).
@@ -11,6 +11,9 @@
 * This plugin was created on request of Fluffyhusky on the HB forums.
 * Special thanks to Chinajade and Thephoenix25 for their help with the CanFly part.
 * Special Thanks to Hazard for the idea and tiagofmcosta to improve on that idea.
+*
+* 2014/04/08 v3.0.0.6
+* Small changes to account for API changes
 *
 * 2013/06/18 v3.0.0.5
 * Small changes to make it run smoother.
@@ -63,55 +66,56 @@
 *
 */
 
-namespace PluginLiquidTreasure3 {
-
+namespace PluginLiquidTreasure3
+{
     #region Styx Namespace
-        using Styx;
-        using Styx.Common;
-        using Styx.Common.Helpers;
-        using Styx.CommonBot;
-        using Styx.CommonBot.Frames;
-        using Styx.CommonBot.Inventory;
-        using Styx.CommonBot.Profiles;
-        using Styx.Helpers;
-        using Styx.Pathing;
-        using Styx.Plugins;
-        using Styx.WoWInternals;
-        using Styx.WoWInternals.Misc;
-        using Styx.WoWInternals.World;
-        using Styx.WoWInternals.WoWObjects;
+    using Styx;
+    using Styx.Common;
+    using Styx.Common.Helpers;
+	using Styx.CommonBot;
+    using Styx.CommonBot.Frames;
+    using Styx.CommonBot.Inventory;
+    using Styx.CommonBot.Profiles;
+    using Styx.Helpers;
+    using Styx.Pathing;
+    using Styx.Plugins;
+    using Styx.WoWInternals;
+	using Styx.WoWInternals.Misc;
+	using Styx.WoWInternals.World;
+    using Styx.WoWInternals.WoWObjects;
     #endregion Styx Namespace
 
     #region System Namespace
-        using System;
-        using System.Collections.Generic;
-        using System.ComponentModel;
-        using System.Data;
-        using System.Diagnostics;
-        using System.Drawing;
-        using System.IO;
-        using System.Linq;
-        using System.Reflection;
-        using System.Runtime.InteropServices;
-        using System.Text;
-        using System.Threading;
-        using System.Windows.Forms;
-        using System.Windows.Media;
-        using System.Xml.Linq;
+    using System;
+    using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.Data;
+    using System.Diagnostics;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
+	using System.Reflection;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading;
+    using System.Windows.Forms;
+    using System.Windows.Media;
+    using System.Xml.Linq;
     #endregion System Namespace
 
     internal class LiquidTreasure3 : HBPlugin {
         public override string Name { get { return "LiquidTreasure 3.0"; } }
         public override string Author { get { return "LiquidAtoR"; } }
-        public override Version Version { get { return new Version(3, 0, 0, 5); } }
+        public override Version Version { get { return new Version(3, 0, 0, 6); } }
         private bool _init;
         private const int MinimumReputationForExalted = 21000;
         private const int MinimumReputationForBestFriends = 42000;
+		
         public override void Initialize() {
             if (_init) {
                 return;
             }
-            base.Initialize();
+            base.OnEnable();
             Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidTreasure 3.0 ready for use...");
             _init = true;
         }
@@ -186,37 +190,44 @@ namespace PluginLiquidTreasure3 {
         #endregion OnyxEgg
 
         #region NetherwingEgg
-            public static void NetherwingEgg() {
-                if (StyxWoW.Me.GetReputationWith(1015) > MinimumReputationForExalted) {
+            public static void NetherwingEgg()
+            {
+                if (StyxWoW.Me.GetReputationWith(1015) > MinimumReputationForExalted)
+                {
                     return;
                 }
                 ObjectManager.Update();
-                var objList = ObjectManager.GetObjectsOfType<WoWGameObject>().Where(netherwingegg => (netherwingegg.Distance2D 
+                var objList = ObjectManager.GetObjectsOfType<WoWGameObject>().Where(netherwingegg => (netherwingegg.Distance2D
                     <= Styx.CommonBot.LootTargeting.LootRadius && (netherwingegg.Entry == 185915) && netherwingegg.CanUse()))
                     .OrderBy(netherwingegg => netherwingegg.Distance).ToList();
-                foreach (var netherwingegg in objList) {
-                    if (!netherwingegg.InLineOfSight) {
+                foreach (var netherwingegg in objList)
+                {
+                    if (!netherwingegg.InLineOfSight)
+                    {
                         return;
                     }
-                    if (StyxWoW.Me.Combat) {
+                    if (StyxWoW.Me.Combat)
+                    {
                         return;
                     }
                     WoWMovement.MoveStop();
                     MoveToLocation(WoWMovement.CalculatePointFrom(netherwingegg.Location, 3));
-                    if (!StyxWoW.Me.HasAura(40120) && !StyxWoW.Me.HasAura(33943)) {
+                    if (!StyxWoW.Me.HasAura(40120) && !StyxWoW.Me.HasAura(33943))
+                    {
                         Flightor.MountHelper.Dismount();
                     }
                     Thread.Sleep(1000);
                     netherwingegg.Interact();
                     Thread.Sleep(2000);
                     Logging.Write(LogLevel.Normal, Colors.DarkRed, "[LiquidTreasure 2]: Opened a {0} with ID {1}", netherwingegg.Name, netherwingegg.Entry);
-                    if (!Flightor.MountHelper.Mounted) {
+                    if (!Flightor.MountHelper.Mounted)
+                    {
                         Flightor.MountHelper.MountUp();
                     }
                     return;
                 }
             }
-        #endregion NetherwingEgg
+            #endregion NetherwingEgg
 
         #region DarkSoil
             public static void DarkSoil() {
