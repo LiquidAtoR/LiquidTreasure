@@ -1,5 +1,5 @@
 /*
-* LiquidTreasure v3.0.0.6 by LiquidAtoR
+* LiquidTreasure v3.0.0.7 by LiquidAtoR
 *
 * This is a little addon that will approach world treasure chests.
 * It will open them and loot the content (and confirm any BoP messages in the process).
@@ -11,6 +11,9 @@
 * This plugin was created on request of Fluffyhusky on the HB forums.
 * Special thanks to Chinajade and Thephoenix25 for their help with the CanFly part.
 * Special Thanks to Hazard for the idea and tiagofmcosta to improve on that idea.
+*
+* 2014/11/01 v3.0.0.7
+* init change for new HB
 *
 * 2014/04/08 v3.0.0.6
 * Small changes to account for API changes
@@ -110,17 +113,14 @@ namespace PluginLiquidTreasure3
         private bool _init;
         private const int MinimumReputationForExalted = 21000;
         private const int MinimumReputationForBestFriends = 42000;
-		
-        public override void Initialize() {
-            if (_init) {
-                return;
-            }
-            base.OnEnable();
-            Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidTreasure 3.0 ready for use...");
-            _init = true;
-        }
 
         public override void Pulse() {
+			if (!_init) {
+				base.OnEnable();
+				Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidTreasure 3.0 ready for use...");
+				_init = true;
+				}
+
             if (_init) {
                 try {
                     if (!StyxWoW.Me.IsActuallyInCombat || !StyxWoW.Me.IsDead) {
